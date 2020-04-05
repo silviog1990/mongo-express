@@ -1,9 +1,11 @@
-import express from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { NODE_ENV, ENVIRONMENT } from './utils/constants';
 import morgan from 'morgan';
 import indexRouter from './routes/index';
+import moviesRouter from './routes/movies';
+import { DBConnection } from './db';
 
 // init express
 const app = express();
@@ -20,6 +22,9 @@ if (NODE_ENV === ENVIRONMENT.PRODUCTION) {
     app.use(helmet());
 }
 
-app.use('/', indexRouter);
+const db = DBConnection.getInstance();
+
+app.use('/api/v1', indexRouter);
+app.use('/api/v1/movies', moviesRouter);
 
 export default app;
