@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { NODE_ENV, ENVIRONMENT } from './utils/constants';
 import morgan from 'morgan';
-import indexRouter from './routes/index';
+import directorsRouter from './routes/directors';
 import moviesRouter from './routes/movies';
 import { DBConnection } from './db';
 
@@ -24,7 +24,7 @@ if (NODE_ENV === ENVIRONMENT.PRODUCTION) {
 
 const db = DBConnection.getInstance();
 
-app.use('/api/v1', indexRouter);
+app.use('/api/v1/directors', directorsRouter);
 app.use('/api/v1/movies', moviesRouter);
 
 export default app;

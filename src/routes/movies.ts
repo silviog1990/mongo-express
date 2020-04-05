@@ -1,9 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
+import { getMovies } from '../controllers/movies';
 
 const router = Router();
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-    res.send('Hello World movies');
-});
+router.get('/', getMovies);
 
 export default router;

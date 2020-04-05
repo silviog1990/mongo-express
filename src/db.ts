@@ -20,7 +20,10 @@ export class DBConnection {
     }
 
     private static connect(url: string) {
-        Mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+        Mongoose.connect(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
             .then(() => {
                 logger.debug('database connected');
             })
