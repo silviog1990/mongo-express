@@ -5,9 +5,11 @@ import { MongoError } from 'mongodb';
 
 export class DBConnection {
     private static instance: DBConnection;
+    private url: string;
 
     private constructor() {
-        DBConnection.connect();
+        this.url = `mongodb://${DBUSER}:${DBPASSWORD}@${DBURL}:${DBPORT}`;
+        DBConnection.connect(this.url);
     }
 
     public static getInstance(): DBConnection {
@@ -17,8 +19,7 @@ export class DBConnection {
         return DBConnection.instance;
     }
 
-    private static connect() {
-        const url = `mongodb://${DBUSER}:${DBPASSWORD}@${DBURL}:${DBPORT}`;
+    private static connect(url: string) {
         Mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
             .then(() => {
                 logger.debug('database connected');
