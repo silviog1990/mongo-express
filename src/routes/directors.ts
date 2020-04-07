@@ -5,7 +5,7 @@ const router = Router();
 
 router
     .get('/', getDirectors)
-    .get('/:director', getDirector)
+    .get('/:lastname', getDirector)
     .post('/', addDirector)
     .patch('/:director', getDirector)
     .put('/:director', getDirector);
