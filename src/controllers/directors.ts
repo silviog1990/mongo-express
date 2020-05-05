@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from 'express';
-import DirectorModel, { DirectorDocument } from '../models/director';
+import DirectorModel, { DirectorDocument, Director } from '../models/director';
 import logger from '../utils/logger';
 
 export const getDirectors = (
@@ -10,50 +10,28 @@ export const getDirectors = (
     DirectorModel.find((err, directors) => {
         if (err) {
             logger.error(err);
-            res.status(500).json({ payload: [] });
+            return res.status(500).json({ payload: [] });
         }
         res.json({ payload: directors });
     });
 };
 
-export const getDirector = (
+export const getDirector = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const { lastname } = req.params;
-
-    // DirectorModel.find((err, directors) => {
-    //     if (err) {
-    //         logger.error(err);
-    //         res.status(500).json({ payload: [] });
-    //     }
-
-    //     directors = directors.filter(
-    //         (director) =>
-    //             director.lastname.toLowerCase() === lastname.toLowerCase()
-    //     );
-    //     if (directors.length > 0) {
-    //         res.json({ payload: directors });
-    //     } else {
-    //         res.status(404).json({ payload: [] });
-    //     }
-    // });
-
-    // problem: case sensitive
-    DirectorModel.find({ lastname })
-        .exec()
-        .then((directors) => {
-            if (directors && directors.length) {
-                res.json({ payload: directors[0] });
-            } else {
-                res.status(404).json({ payload: [] });
-            }
-        })
-        .catch((err) => {
-            logger.error(err);
-            res.status(500).json({ payload: [] });
-        });
+    const { id } = req.params;
+    try {
+        const director = await DirectorModel.findById(id);
+        if (director === undefined || director === null) {
+            return res.status(404).send();
+        }
+        res.json(director);
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ err: error });
+    }
 };
 
 export const addDirector = (
@@ -71,7 +49,45 @@ export const addDirector = (
     director
         .save()
         .then((v) => {
-            res.json({ payload: v });
+            res.status(201).json({ payload: v });
+        })
+        .catch((err) => {
+            logger.error(err);
+            res.status(500).json({ err });
+        });
+};
+
+export const updateDirector = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+    const director: Director = req.body;
+    try {
+        const result = await DirectorModel.findByIdAndUpdate(id, director);
+        if (result) {
+            return res.json(result);
+        }
+        res.status(404).send();
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ err: error });
+    }
+};
+
+export const deleteDirector = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+    DirectorModel.deleteOne({ _id: id })
+        .then((v) => {
+            if (v.deletedCount && v.deletedCount > 0) {
+                return res.status(204).send();
+            }
+            res.status(404).send();
         })
         .catch((err) => {
             logger.error(err);

@@ -23,6 +23,7 @@ export class DBConnection {
         Mongoose.connect(url, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            useFindAndModify: false,
         })
             .then(() => {
                 logger.debug('database connected');

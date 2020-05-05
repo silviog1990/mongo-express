@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { getDirector, addDirector, getDirectors } from '../controllers/directors';
+import { getDirector, addDirector, getDirectors, deleteDirector, updateDirector } from '../controllers/directors';
 
 const router = Router();
 
 router
     .get('/', getDirectors)
-    .get('/:lastname', getDirector)
+    .get('/:id', getDirector)
     .post('/', addDirector)
-    .patch('/:director', getDirector)
-    .put('/:director', getDirector);
+    .put('/:id', updateDirector)
+    .delete('/:id', deleteDirector);
 
 export default router;
