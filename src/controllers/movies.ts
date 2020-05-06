@@ -2,21 +2,17 @@ import { NextFunction, Response, Request } from 'express';
 import MovieModel, { Movie, MovieDocument } from '../models/movie';
 import logger from '../utils/logger';
 
-export const getMovies = (req: Request, res: Response, next: NextFunction) => {
-    MovieModel.find((err, movies) => {
-        if (err) {
-            logger.error(err);
-            return res.status(500).json({ payload: [] });
-        }
+export const getMovies = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const movies = await MovieModel.find();
         res.json({ payload: movies });
-    });
+    } catch (err) {
+        logger.error(err);
+        res.status(500).json({ payload: [] });
+    }
 };
 
-export const getMovie = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const getMovie = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
         const movie = await MovieModel.findById(id);
@@ -30,30 +26,24 @@ export const getMovie = async (
     }
 };
 
-export const addMovie = (req: Request, res: Response, next: NextFunction) => {
+export const addMovie = async (req: Request, res: Response, next: NextFunction) => {
     const { title, duration, genres, director } = req.body as Movie;
-    const movie: MovieDocument = new MovieModel({
+    let movie: MovieDocument = new MovieModel({
         title,
         duration,
         genres,
         director,
     });
-    movie
-        .save()
-        .then((v) => {
-            res.status(201).json({ payload: v });
-        })
-        .catch((err) => {
-            logger.error(err);
-            res.status(500).json({ err });
-        });
+    try {
+        movie = await movie.save();
+        res.status(201).json({ payload: movie });
+    } catch (err) {
+        logger.error(err);
+        res.status(500).json({ err });
+    }
 };
 
-export const updateMovie = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const updateMovie = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const movie: Movie = req.body;
     try {
@@ -68,21 +58,16 @@ export const updateMovie = async (
     }
 };
 
-export const deleteMovie = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const deleteMovie = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    MovieModel.deleteOne({ _id: id })
-        .then((v) => {
-            if (v.deletedCount && v.deletedCount > 0) {
-                return res.status(204).send();
-            }
-            res.status(404).send();
-        })
-        .catch((err) => {
-            logger.error(err);
-            res.status(500).json({ err });
-        });
+    try {
+        const resp = await MovieModel.deleteOne({ _id: id });
+        if (resp.deletedCount && resp.deletedCount > 0) {
+            return res.status(204).send();
+        }
+        res.status(404).send();
+    } catch (err) {
+        logger.error(err);
+        res.status(500).json({ err });
+    }
 };

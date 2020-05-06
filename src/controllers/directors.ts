@@ -2,25 +2,17 @@ import { NextFunction, Response, Request } from 'express';
 import DirectorModel, { DirectorDocument, Director } from '../models/director';
 import logger from '../utils/logger';
 
-export const getDirectors = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    DirectorModel.find((err, directors) => {
-        if (err) {
-            logger.error(err);
-            return res.status(500).json({ payload: [] });
-        }
+export const getDirectors = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const directors = DirectorModel.find();
         res.json({ payload: directors });
-    });
+    } catch (err) {
+        logger.error(err);
+        return res.status(500).json({ payload: [] });
+    }
 };
 
-export const getDirector = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const getDirector = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
         const director = await DirectorModel.findById(id);
@@ -34,34 +26,24 @@ export const getDirector = async (
     }
 };
 
-export const addDirector = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const addDirector = async (req: Request, res: Response, next: NextFunction) => {
     const { firstname, lastname, birthdate, gender } = req.body;
-    const director: DirectorDocument = new DirectorModel({
+    let director: DirectorDocument = new DirectorModel({
         firstname,
         lastname,
         birthdate,
         gender,
     });
-    director
-        .save()
-        .then((v) => {
-            res.status(201).json({ payload: v });
-        })
-        .catch((err) => {
-            logger.error(err);
-            res.status(500).json({ err });
-        });
+    try {
+        director = await director.save();
+        res.status(201).json({ payload: director });
+    } catch (err) {
+        logger.error(err);
+        res.status(500).json({ err });
+    }
 };
 
-export const updateDirector = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const updateDirector = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const director: Director = req.body;
     try {
@@ -76,21 +58,16 @@ export const updateDirector = async (
     }
 };
 
-export const deleteDirector = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const deleteDirector = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    DirectorModel.deleteOne({ _id: id })
-        .then((v) => {
-            if (v.deletedCount && v.deletedCount > 0) {
-                return res.status(204).send();
-            }
-            res.status(404).send();
-        })
-        .catch((err) => {
-            logger.error(err);
-            res.status(500).json({ err });
-        });
+    try {
+        const resp = await DirectorModel.deleteOne({ _id: id });
+        if (resp.deletedCount && resp.deletedCount > 0) {
+            return res.status(204).send();
+        }
+        res.status(404).send();
+    } catch (err) {
+        logger.error(err);
+        res.status(500).json({ err });
+    }
 };

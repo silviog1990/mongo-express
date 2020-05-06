@@ -1,10 +1,12 @@
 import { Director } from './director';
 import mongoose, { Document, Schema } from 'mongoose';
 
+type DirectorType = { _id: string } & Director;
+
 export interface Movie {
     title: string;
     genres: string[];
-    director: Director;
+    director: DirectorType;
     duration: number;
 }
 
