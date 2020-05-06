@@ -4,7 +4,7 @@ import logger from '../utils/logger';
 
 export const getDirectors = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const directors = DirectorModel.find();
+        const directors = await DirectorModel.find();
         res.json({ payload: directors });
     } catch (err) {
         logger.error(err);
