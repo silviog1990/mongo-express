@@ -6,9 +6,9 @@ export const getDirectors = async (req: Request, res: Response, next: NextFuncti
     try {
         const directors = await DirectorModel.find();
         res.json({ payload: directors });
-    } catch (err) {
-        logger.error(err);
-        return res.status(500).json({ payload: [] });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ error });
     }
 };
 
@@ -19,10 +19,10 @@ export const getDirector = async (req: Request, res: Response, next: NextFunctio
         if (director === undefined || director === null) {
             return res.status(404).send();
         }
-        res.json(director);
+        res.json({ payload: director });
     } catch (error) {
         logger.error(error);
-        res.status(500).json({ err: error });
+        res.status(500).json({ error });
     }
 };
 
@@ -37,9 +37,9 @@ export const addDirector = async (req: Request, res: Response, next: NextFunctio
     try {
         director = await director.save();
         res.status(201).json({ payload: director });
-    } catch (err) {
-        logger.error(err);
-        res.status(500).json({ err });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ error });
     }
 };
 
@@ -49,12 +49,12 @@ export const updateDirector = async (req: Request, res: Response, next: NextFunc
     try {
         const result = await DirectorModel.findByIdAndUpdate(id, director);
         if (result) {
-            return res.json(result);
+            return res.status(204).send();
         }
         res.status(404).send();
     } catch (error) {
         logger.error(error);
-        res.status(500).json({ err: error });
+        res.status(500).json({ error });
     }
 };
 
@@ -66,8 +66,8 @@ export const deleteDirector = async (req: Request, res: Response, next: NextFunc
             return res.status(204).send();
         }
         res.status(404).send();
-    } catch (err) {
-        logger.error(err);
-        res.status(500).json({ err });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ error });
     }
 };

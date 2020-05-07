@@ -6,9 +6,9 @@ export const getMovies = async (req: Request, res: Response, next: NextFunction)
     try {
         const movies = await MovieModel.find();
         res.json({ payload: movies });
-    } catch (err) {
-        logger.error(err);
-        res.status(500).json({ payload: [] });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ error });
     }
 };
 
@@ -22,7 +22,7 @@ export const getMovie = async (req: Request, res: Response, next: NextFunction) 
         res.json({ payload: movie });
     } catch (error) {
         logger.error(error);
-        res.status(500).json({ err: error });
+        res.status(500).json({ error });
     }
 };
 
@@ -37,9 +37,9 @@ export const addMovie = async (req: Request, res: Response, next: NextFunction) 
     try {
         movie = await movie.save();
         res.status(201).json({ payload: movie });
-    } catch (err) {
-        logger.error(err);
-        res.status(500).json({ err });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ error });
     }
 };
 
@@ -49,12 +49,12 @@ export const updateMovie = async (req: Request, res: Response, next: NextFunctio
     try {
         const result = await MovieModel.findByIdAndUpdate(id, movie);
         if (result) {
-            return res.json({ payload: result });
+            return res.status(204).send();
         }
         res.status(404).send();
     } catch (error) {
         logger.error(error);
-        res.status(500).json({ err: error });
+        res.status(500).json({ error });
     }
 };
 
@@ -66,8 +66,8 @@ export const deleteMovie = async (req: Request, res: Response, next: NextFunctio
             return res.status(204).send();
         }
         res.status(404).send();
-    } catch (err) {
-        logger.error(err);
-        res.status(500).json({ err });
+    } catch (error) {
+        logger.error(error);
+        res.status(500).json({ error });
     }
 };

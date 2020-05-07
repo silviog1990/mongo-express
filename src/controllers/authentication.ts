@@ -45,6 +45,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         res.json({ payload: { token, refreshToken } });
     } catch (error) {
         logger.error(error);
-        res.status(500).json(error);
+        res.status(500).json({error});
     }
 };
