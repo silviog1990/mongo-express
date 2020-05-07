@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { login } from '../controllers/authentication';
+import { login, checkRefreshToken } from '../controllers/authentication';
 
 const router = Router();
 
-router.post('/login', login);
+router
+    .post('/login', login)
+    .post('/refreshToken', checkRefreshToken);
 
 export default router;
