@@ -2,9 +2,8 @@ import { NextFunction, Response, Request } from 'express';
 import UserModel, { User } from '../models/user';
 import logger from '../utils/logger';
 import * as JWT from 'jsonwebtoken';
-import { JWT_SECRET, JWT_REFRESH_SECRET } from '../utils/constants';
+import { JWT_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_EXPIRES_IN, JWT_REFRESH_TOKEN_EXPIRES_IN } from '../utils/constants';
 import { CacheConnection } from '../cache';
-import { verifyRefreshToken } from '../middlewares/authorization';
 
 const redisClient = CacheConnection.getInstance().getClient();
 
@@ -40,8 +39,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             res.header('WWW-Authenticate', 'Bearer');
             return res.json({ error: 'Authentication failed! Wrong credentials.' });
         }
-        const token = await generateJWT({ username }, JWT_SECRET, { expiresIn: '1m' });
-        const refreshToken = await generateJWT({ username }, JWT_REFRESH_SECRET, { expiresIn: '2m' });
+        const token = await generateJWT({ username }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
+        const refreshToken = await generateJWT({ username }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
         await redisClient.set(refreshToken, username);
         res.json({ payload: { token, refreshToken } });
     } catch (error) {
@@ -53,11 +52,11 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { refreshToken } = req.body;
-        const { username } = res.locals;
-        const token = await generateJWT({ username }, JWT_SECRET, { expiresIn: '1m' });
-        const newRefreshToken = await generateJWT({ username }, JWT_REFRESH_SECRET, { expiresIn: '2m' });
-        redisClient.del(refreshToken);
-        await redisClient.set(newRefreshToken, username);
+        const { decoded } = res.locals;
+        const token = await generateJWT({ username: decoded.username }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
+        const newRefreshToken = await generateJWT({ username: decoded.username }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
+        await redisClient.del(refreshToken);
+        await redisClient.set(newRefreshToken, decoded.username);
         res.json({ payload: { token, refreshToken: newRefreshToken } });
     } catch (error) {
         logger.error(error);

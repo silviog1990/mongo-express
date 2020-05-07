@@ -15,4 +15,7 @@ export const CACHE_PORT = process.env.CACHE_PORT || 6379;
 
 // JWT
 export const JWT_SECRET = process.env.JWT_SECRET || 'verysecret';
-export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'verysecret';
+export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'verysecret2';
+export const JWT_TOKEN_EXPIRES_IN = '15m';
+export const JWT_REFRESH_TOKEN_EXPIRES_IN = '30d';
+

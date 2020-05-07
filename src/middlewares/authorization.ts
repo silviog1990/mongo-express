@@ -37,6 +37,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction, secr
     } catch (error) {
         logger.error(error);
         if (error.expiredAt && !isRefreshToken) {
+            res.header('WWW-Authenticate', 'Bearer');
             return res.status(401).json({ error });
         }
         if (isRefreshToken) {
