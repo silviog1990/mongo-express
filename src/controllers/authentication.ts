@@ -51,22 +51,14 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-        res.status(400).send();
-    }
     try {
-        redisClient.get(refreshToken, async (err, reply) => {
-            // reply is null when the key is missing
-            if (!reply) {
-                return res.status(403).send();
-            }
-            const ok = await verifyRefreshToken(req, res, next);
-            if (ok) {
-                logger.info(res.locals);
-                res.json(res.locals);
-            }
-        });
+        const { refreshToken } = req.body;
+        const { username } = res.locals;
+        const token = await generateJWT({ username }, JWT_SECRET, { expiresIn: '1m' });
+        const newRefreshToken = await generateJWT({ username }, JWT_REFRESH_SECRET, { expiresIn: '2m' });
+        redisClient.del(refreshToken);
+        await redisClient.set(newRefreshToken, username);
+        res.json({ payload: { token, refreshToken: newRefreshToken } });
     } catch (error) {
         logger.error(error);
         res.status(500).json({ error });
