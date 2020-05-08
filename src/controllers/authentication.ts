@@ -41,7 +41,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         }
         const token = await generateJWT({ username }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
         const refreshToken = await generateJWT({ username }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
-        await redisClient.set(refreshToken, username);
+        const decoded = JSON.stringify(JWT.decode(refreshToken));
+        await redisClient.set(refreshToken, decoded);
         res.json({ payload: { token, refreshToken } });
     } catch (error) {
         logger.error(error);
@@ -52,11 +53,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { refreshToken } = req.body;
-        const { decoded } = res.locals;
-        const token = await generateJWT({ username: decoded.username }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
-        const newRefreshToken = await generateJWT({ username: decoded.username }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
+        let { decoded } = res.locals;
+        decoded = JSON.stringify(decoded);
+        const token = await generateJWT({ decoded }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
+        const newRefreshToken = await generateJWT({ decoded }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
         await redisClient.del(refreshToken);
-        await redisClient.set(newRefreshToken, decoded.username);
+        await redisClient.set(newRefreshToken, decoded);
         res.json({ payload: { token, refreshToken: newRefreshToken } });
     } catch (error) {
         logger.error(error);
