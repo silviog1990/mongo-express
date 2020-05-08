@@ -1,150 +1,203 @@
 {
-    "openapi": "3.0.1",
-    "info": {
-       "title": "Movies API",
-       "description": "Simple server API for movie and directors.  You can find out more about at [https://github.com/silviog1990/mongo-express](https://github.com/silviog1990/mongo-express).",
-       "contact": {
-          "email": "gaysilvio90@gmail.com"
-       },
-       "license": {
-          "name": "MIT License",
-          "url": "https://github.com/silviog1990/mongo-express/blob/master/LICENSE"
-       },
-       "version": "1.0.0"
-    },
-    "externalDocs": {
-       "description": "Find out more about this",
-       "url": "https://github.com/silviog1990/mongo-express"
-    },
-    "servers": [
-       {
-          "url": "http://localhost:3000"
-       }
-    ],
-    "paths": {
-       "/api/v1/auth/login": {
-          "post": {
-             "tags": [
-                "Authentication"
-             ],
-             "summary": "Perform login action",
-             "operationId": "login",
-             "requestBody": {
-                "description": "usernmae & password",
-                "content": {
-                   "application/json": {
-                      "schema": {
-                         "$ref": "#/components/schemas/User"
-                      }
-                   }
-                },
-                "required": true
-             },
-             "responses": {
-                "200": {
-                   "description": "Login successful",
-                   "content": {
-                      "application/json": {
-                         "schema": {
-                            "$ref": "#/components/schemas/AuthResponse"
-                         }
-                      }
-                   }
-                },
-                "400": {
-                   "description": "Bad Request",
-                   "content": {}
-                },
-                "401": {
-                   "description": "Authentication failed! Wrong credentials.",
-                   "content": {}
-                },
-                "500": {
-                   "description": "Server Error",
-                   "content": {}
-                }
-             }
-          }
-       },
-       "/api/v1/auth/refreshToken": {
-          "post": {
-             "tags": [
-                "Authentication"
-             ],
-             "summary": "Perform login action",
-             "operationId": "refreshToken",
-             "requestBody": {
-                "description": "refreshToken",
-                "content": {
-                   "application/json": {
-                      "schema": {
-                         "type": "object",
-                         "properties": {
-                            "refreshToken": {
-                               "type": "string"
-                            }
-                         }
-                      }
-                   }
-                },
-                "required": true
-             },
-             "responses": {
-                "200": {
-                   "description": "New token and refreshToken ok",
-                   "content": {
-                      "application/json": {
-                         "schema": {
-                            "$ref": "#/components/schemas/AuthResponse"
-                         }
-                      }
-                   }
-                },
-                "400": {
-                   "description": "Bad Request",
-                   "content": {}
-                },
-                "403": {
-                   "description": "Forbidden",
-                   "content": {}
-                },
-                "500": {
-                   "description": "Server Error",
-                   "content": {}
-                }
-             }
-          }
-       }
-    },
-    "components": {
-       "schemas": {
-          "User": {
-             "type": "object",
-             "properties": {
-                "username": {
-                   "type": "string"
-                },
-                "password": {
-                   "type": "string"
-                }
-             }
-          },
-          "AuthResponse": {
-             "type": "object",
-             "properties": {
-                "payload": {
-                   "type": "object",
-                   "properties": {
-                      "token": {
-                         "type": "string"
-                      },
-                      "refreshToken": {
-                         "type": "string"
-                      }
-                   }
-                }
-             }
-          }
-       }
-    }
- }
+   "openapi": "3.0.1",
+   "info": {
+      "title": "Movies API",
+      "description": "Simple server API for movie and directors.  You can find out more about at [https://github.com/silviog1990/mongo-express](https://github.com/silviog1990/mongo-express).",
+      "contact": {
+         "email": "gaysilvio90@gmail.com"
+      },
+      "license": {
+         "name": "MIT License",
+         "url": "https://github.com/silviog1990/mongo-express/blob/master/LICENSE"
+      },
+      "version": "1.0.0"
+   },
+   "externalDocs": {
+      "description": "Find out more about this",
+      "url": "https://github.com/silviog1990/mongo-express"
+   },
+   "servers": [
+      {
+         "url": "http://localhost:3000"
+      }
+   ],
+   "paths": {
+      "/api/v1/auth/login": {
+         "post": {
+            "tags": [
+               "Authentication"
+            ],
+            "summary": "Perform login action",
+            "operationId": "login",
+            "requestBody": {
+               "description": "usernmae & password",
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "$ref": "#/components/schemas/User"
+                     }
+                  }
+               },
+               "required": true
+            },
+            "responses": {
+               "200": {
+                  "description": "Login successful",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/AuthResponse"
+                        }
+                     }
+                  }
+               },
+               "400": {
+                  "description": "Bad Request",
+                  "content": {}
+               },
+               "401": {
+                  "description": "Authentication failed! Wrong credentials.",
+                  "content": {}
+               },
+               "500": {
+                  "description": "Server Error",
+                  "content": {}
+               }
+            }
+         }
+      },
+      "/api/v1/auth/refreshToken": {
+         "post": {
+            "tags": [
+               "Authentication"
+            ],
+            "summary": "Perform login action",
+            "operationId": "refreshToken",
+            "requestBody": {
+               "description": "refreshToken",
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "properties": {
+                           "refreshToken": {
+                              "type": "string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "required": true
+            },
+            "responses": {
+               "200": {
+                  "description": "New token and refreshToken ok",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/AuthResponse"
+                        }
+                     }
+                  }
+               },
+               "400": {
+                  "description": "Bad Request",
+                  "content": {}
+               },
+               "403": {
+                  "description": "Forbidden",
+                  "content": {}
+               },
+               "500": {
+                  "description": "Server Error",
+                  "content": {}
+               }
+            }
+         }
+      },
+      "/api/v1/directors": {
+         "get": {
+            "tags": [
+               "Directors"
+            ],
+            "security": [
+               {
+                  "ApiKeyAuth": []
+               }
+            ],
+            "summary": "get list of directors",
+            "operationId": "listDirectors",
+            "responses": {
+               "200": {
+                  "description": "list of directors",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "type": "array",
+                           "items": {
+                              "$ref": "#/components/schemas/Director"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   },
+   "components": {
+      "schemas": {
+         "User": {
+            "type": "object",
+            "properties": {
+               "username": {
+                  "type": "string"
+               },
+               "password": {
+                  "type": "string"
+               }
+            }
+         },
+         "AuthResponse": {
+            "type": "object",
+            "properties": {
+               "payload": {
+                  "type": "object",
+                  "properties": {
+                     "token": {
+                        "type": "string"
+                     },
+                     "refreshToken": {
+                        "type": "string"
+                     }
+                  }
+               }
+            }
+         },
+         "Director": {
+            "type": "object",
+            "properties": {
+               "firstname": {
+                  "type": "string"
+               },
+               "lastname": {
+                  "type": "string"
+               },
+               "birthdate": {
+                  "type": "string"
+               },
+               "gender": {
+                  "type": "string"
+               }
+            }
+         }
+      },
+      "securitySchemes": {
+         "ApiKeyAuth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization"
+         }
+      }
+   }
+}

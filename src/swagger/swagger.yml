@@ -77,6 +77,25 @@ paths:
           description: Server Error
           content: {}
           
+  /api/v1/directors:
+    get:
+      tags: 
+      - Directors
+      security:
+        - ApiKeyAuth: []
+      summary: get list of directors
+      operationId: listDirectors
+      responses:
+        200:
+          description: list of directors
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Director'
+                
+          
 components:
   schemas:
     User:
@@ -96,4 +115,21 @@ components:
               type: string
             refreshToken:
               type: string
-    
+              
+    Director:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        birthdate:
+          type: string
+        gender:
+          type: string
+
+  securitySchemes:
+    ApiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: Authorization  # name of the header, query parameter or cookie
