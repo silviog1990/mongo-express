@@ -27,6 +27,7 @@ const generateJWT = async (payload: any, secret: string = JWT_SECRET, config?: J
     });
 };
 
+// TODO get browser fingerprint and save in redis with refreshToken
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body as User;
     if (!(username && password)) {
@@ -50,6 +51,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 };
 
+// TODO check browser fingerprint
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { refreshToken } = req.body;
