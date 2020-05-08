@@ -40,8 +40,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             res.header('WWW-Authenticate', 'Bearer');
             return res.json({ error: 'Authentication failed! Wrong credentials.' });
         }
-        const token = await generateJWT({ username }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
-        const refreshToken = await generateJWT({ username }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
+        const payloadJWT = { username };
+        const token = await generateJWT(payloadJWT, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRES_IN });
+        const refreshToken = await generateJWT(payloadJWT, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN });
         const decoded = JSON.stringify(JWT.decode(refreshToken));
         await redisClient.set(refreshToken, decoded);
         res.json({ payload: { token, refreshToken } });
