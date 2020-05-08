@@ -8,6 +8,8 @@ import directorsRouter from './routes/directors';
 import moviesRouter from './routes/movies';
 import { DBConnection } from './db';
 import { CacheConnection } from './cache';
+import * as swaggerUI from 'swagger-ui-express';
+import * as swaggerDocument from './swagger/swagger.json';
 
 // init express
 const app = express();
@@ -27,6 +29,7 @@ if (NODE_ENV === ENVIRONMENT.PRODUCTION) {
 const db = DBConnection.getInstance();
 const cache = CacheConnection.getInstance();
 
+app.use('/api/v1/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/directors', directorsRouter);
 app.use('/api/v1/movies', moviesRouter);
