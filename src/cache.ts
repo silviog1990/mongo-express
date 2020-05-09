@@ -1,5 +1,7 @@
 import { CACHE_HOST, CACHE_PORT } from './utils/constants';
 import * as REDIS from 'redis';
+import logger from './utils/logger';
+import { Events } from './utils/events';
 
 export class CacheConnection {
     private static instance: CacheConnection;
@@ -10,7 +12,7 @@ export class CacheConnection {
     private constructor() {
         this.host = CACHE_HOST;
         this.port = +CACHE_PORT;
-        this.client = CacheConnection.connect(this.port, this.host);
+        this.client = this.connect(this.port, this.host);
     }
 
     public static getInstance(): CacheConnection {
@@ -21,18 +23,31 @@ export class CacheConnection {
     }
 
     public getHost(): string {
-        return CacheConnection.getInstance().host;
+        return this.host;
     }
 
     public getPort(): number {
-        return CacheConnection.getInstance().port;
+        return this.port;
     }
 
     public getClient(): REDIS.RedisClient {
-        return CacheConnection.getInstance().client;
+        return this.client;
     }
 
-    private static connect(port: number, host: string): REDIS.RedisClient {
+    public disconnect() {
+        this.client.quit((error, ok) => {
+            if (error) {
+                logger.error(error.message);
+                return;
+            }
+            logger.info('client redis disconnected')
+            const eventEmitter = Events.getInstance().getEventEmitter();
+            eventEmitter.emit('cacheDisconnected');
+        });
+    }
+
+    private connect(port: number, host: string): REDIS.RedisClient {
+        logger.info('Redis connected');
         return REDIS.createClient(port, host);
     }
 }
