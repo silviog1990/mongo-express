@@ -1,19 +1,5 @@
 version: '3'
 services:
-  movies_server:
-    build: .
-    ports:
-      - "3000:3000"
-    networks: 
-      - backend
-    environment: 
-      DBHOST: mongodb
-      CACHE_HOST: redis
-      NODE_ENV: prod
-    depends_on: 
-      - mongodb
-      - redis
-
   mongodb:
     image: "mongo:latest"
     ports:
@@ -24,19 +10,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongoadmin
       MONGO_INITDB_ROOT_PASSWORD: passwordMongo2020
-    networks: 
-      - backend
-
   redis:
     image: "redis:latest"
     ports: 
       - "6379:6379"
-    networks: 
-      - backend
-
 volumes:
   mongodb_volume:
   mongodb_volume_configdb:
-
-networks:
-  backend: 
