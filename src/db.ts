@@ -1,7 +1,6 @@
 import Mongoose, { Connection } from 'mongoose';
 import { DBPORT, DBUSER, DBPASSWORD, DBHOST } from './utils/constants';
 import logger from './utils/logger';
-import { EventEmitter } from 'events';
 import { Events } from './utils/events';
 
 export class DBConnection {
