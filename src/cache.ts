@@ -40,14 +40,20 @@ export class CacheConnection {
                 logger.error(error.message);
                 return;
             }
-            logger.info('client redis disconnected')
+            logger.info('client redis disconnected');
             const eventEmitter = Events.getInstance().getEventEmitter();
             eventEmitter.emit('cacheDisconnected');
         });
     }
 
     private connect(port: number, host: string): REDIS.RedisClient {
-        logger.info('Redis connected');
-        return REDIS.createClient(port, host);
+        try {
+            const client = REDIS.createClient(port, host);
+            logger.info('Redis connected');
+            return client;
+        } catch (error) {
+            logger.error(error);
+            process.exit(1);
+        }
     }
 }
