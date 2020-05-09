@@ -37,7 +37,7 @@ export class CacheConnection {
     public disconnect() {
         this.client.quit((error, ok) => {
             if (error) {
-                logger.error(error.message);
+                // logger.error(error.message);
                 return;
             }
             logger.info('client redis disconnected');
@@ -49,7 +49,17 @@ export class CacheConnection {
     private connect(port: number, host: string): REDIS.RedisClient {
         try {
             const client = REDIS.createClient(port, host);
-            logger.info('Redis connected');
+            let cont = 0;
+            client.on('error', (err) => {
+                logger.error(`Attempts Redis connection n: ${++cont}`);
+                if (cont >= 10) {
+                    logger.error(err);
+                    process.exit(1);
+                }
+            });
+            client.on('connect', () => {
+                logger.info('Redis connected');
+            });
             return client;
         } catch (error) {
             logger.error(error);
